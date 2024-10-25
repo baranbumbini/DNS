@@ -43,6 +43,19 @@ Vagrant.configure("2") do |config|
     echo '103 IN  PTR venus.sistema.test.' | sudo tee -a /etc/bind/db.192
 
 
+    echo 'zone "sistema.test" {' | sudo tee -a /etc/bind/named.conf.local
+    echo '    type slave;' | sudo tee -a /etc/bind/named.conf.local
+    echo '    file "/etc/bind/db.sistema.test";' | sudo tee -a /etc/bind/named.conf.local
+    echo '    masters { 192.168.57.103; };' | sudo tee -a /etc/bind/named.conf.local
+    echo '};' | sudo tee -a /etc/bind/named.conf.local
+
+    echo 'zone "57.168.192.in-addr.arpa" {' | sudo tee -a /etc/bind/named.conf.local
+    echo '    type slave;' | sudo tee -a /etc/bind/named.conf.local
+    echo '    file "/etc/bind/db.192";' | sudo tee -a /etc/bind/named.conf.local
+    echo '    masters { 192.168.57.103; };' | sudo tee -a /etc/bind/named.conf.local
+    echo '};' | sudo tee -a /etc/bind/named.conf.local
+
+
     sudo systemctl restart bind9
   SHELL
 
