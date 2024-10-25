@@ -1,7 +1,7 @@
 Vagrant.configure("2") do |config|
 
   config.vm.box = "debian/bookworm64"
-  config.vm.boot_timeout = 600  
+  config.vm.boot_timeout = 600
 
   config.vm.provision "shell", inline: <<-SHELL
     sudo apt-get update -y
@@ -29,6 +29,8 @@ Vagrant.configure("2") do |config|
     echo 'venus IN  A   192.168.57.102' | sudo tee -a /etc/bind/db.sistema.test
     echo 'mail IN  CNAME marte.sistema.test.' | sudo tee -a /etc/bind/db.sistema.test
     echo 'ns2 IN  A   192.168.57.102' | sudo tee -a /etc/bind/db.sistema.test
+    echo 'mars IN  A   192.168.57.104' | sudo tee -a /etc/bind/db.sistema.test
+    echo '@   IN  MX  10 mail.sistema.test.' | sudo tee -a /etc/bind/db.sistema.test  # Configuración de registro MX
 
     echo '\$TTL    7200' | sudo tee /etc/bind/db.192
     echo '@   IN  SOA ns1.sistema.test. admin.sistema.test. (' | sudo tee -a /etc/bind/db.192
@@ -71,5 +73,15 @@ Vagrant.configure("2") do |config|
   config.vm.define "tierra" do |tierra|
     tierra.vm.hostname = "tierra.sistema.test"
     tierra.vm.network "private_network", ip: "192.168.57.103"
+  end
+  
+  config.vm.define "marte" do |marte|
+    marte.vm.hostname = "marte.sistema.test"
+    marte.vm.network "private_network", ip: "192.168.57.104"
+    marte.vm.provision "shell", inline: <<-SHELL
+      sudo apt-get update -y
+      sudo apt-get install -y postfix
+      sudo systemctl restart postfix
+    SHELL
   end
 end
